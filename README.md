@@ -2,7 +2,7 @@
 ![truckjob](https://user-images.githubusercontent.com/79053058/185757903-e0aabb8e-a8e7-4be8-93d6-5f2d6ae5d3fb.png)
 
 ## :bookmark_tabs: **Description** 
-This FiveM resource lets the player experience working as a truck driver and delivering the cargo to locations around the map.
+This FiveM resource enables the player to work as a truck driver and deliver cargo to locations around the map.
 
 By default, this resource is **Standalone**. However, if you are using [ND_Framework](https://forum.cfx.re/t/updated-nd-framework-addons/4792200) by **Andy7666**, you can reward the player for completing the job with money, or penalise them for cancelling the job.
 To do so, simply set *UseND* to true in the *config.lua*. You can also simply convert the script to make it work with any framework you want.
