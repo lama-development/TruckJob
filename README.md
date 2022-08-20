@@ -25,7 +25,7 @@ The player can decide to cancel the job at any moment. If that happens, they wil
 Check the config.lua for more information.
 
 ## :eyes: **Preview** 
-[YouTube]()
+[YouTube](https://youtu.be/TQ-zqjlY9GU)
 
 ## 📈 Resmon
 | Context | CPU |
