@@ -13,11 +13,7 @@ Citizen.CreateThread(function()
     AddTextEntry("press_start_job", "Press ~INPUT_CONTEXT~ to start your shift")
     while true do
         Citizen.Wait(0)
-        local player = PlayerPedId()
-        
-        -- uncomment this line below if you want a marker, I personally prefer without
-        --DrawMarker(1, Config.BlipLocation.x, Config.BlipLocation.y, Config.BlipLocation.z, 0, 0, 0, 0, 0, 0, 1.0, 1.0, 1.5, 0, 150, 255, 128, 0, 0, 0, 0)
-        
+        local player = PlayerPedId()    
         -- get distance between blip and player and check if player is near it
         if #(GetEntityCoords(player) - vector3(Config.BlipLocation.x, Config.BlipLocation.y, Config.BlipLocation.z)) <= 5 then
             DisplayHelpTextThisFrame("press_start_job")
@@ -98,6 +94,7 @@ function FirstTask()
             if IsVehicleAttachedToTrailer(vehicle) then
                 RemoveBlip(blip)
                 SecondTask()
+                break
             end
         end
     end
@@ -105,6 +102,7 @@ end
 
 -- the second task consists of driving to the location and deliver the trailer
 function SecondTask()
+    hasCanceledJob = false
     AddTextEntry("press_detach_trailer", "Long press ~INPUT_VEH_HEADLIGHT~ to detach the trailer")
     local location = math.randomchoice(Config.Destinations)
     local blip = AddBlipForCoord(location.x, location.y, location.z)
@@ -131,6 +129,7 @@ function SecondTask()
             if IsVehicleAttachedToTrailer(vehicle) == false then
                 RemoveBlip(blip)
                 ThirdTask()
+                break
             end
         end
     end
