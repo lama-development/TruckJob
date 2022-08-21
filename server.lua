@@ -1,3 +1,9 @@
+--[[
+TruckJob - Created by Lama	
+For support - Lama#9612 on Discord	
+Do not edit below if you don't know what you are doing
+]]--
+
 -- ND_Framework exports
 NDCore = exports["ND_Core"]:GetCoreObject()
 
