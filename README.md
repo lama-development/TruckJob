@@ -4,8 +4,7 @@
 ## :bookmark_tabs: **Description** 
 This FiveM resource enables the player to work as a truck driver and deliver cargo to locations around the map.
 
-By default, this resource is **Standalone**. However, if you are using [ND_Framework](https://forum.cfx.re/t/updated-nd-framework-addons/4792200) by **Andy7666**, you can reward the player for completing the job with money, or penalise them for cancelling the job.
-To do so, simply set *UseND* to true in the *config.lua*. You can also simply convert the script to make it work with any framework you want.
+If you are using [ND_Framework](https://forum.cfx.re/t/updated-nd-framework-addons/4792200) by **Andy7666**, you can reward the player for completing the job with money, or penalise them for cancelling the job. If you want it to be standalone, then simply set **UseND** to **false** in the config.lua. You can also simply convert the script to make it work with any framework you want.
 
 This job consists of 3 parts:
 1. Start your shift at the truck depot, go pick up the trailer at a location.
