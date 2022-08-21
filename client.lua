@@ -1,5 +1,5 @@
 --[[
-TrucJob - Created by Lama	
+TruckJob - Created by Lama	
 For support - Lama#9612 on Discord	
 Do not edit below if you don't know what you are doing
 ]]--
