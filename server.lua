@@ -10,7 +10,7 @@ NDCore = exports["ND_Core"]:GetCoreObject()
 RegisterServerEvent("LamasJobs:GivePay")
 AddEventHandler("LamasJobs:GivePay", function(amount)
 	-- if using another framework than ND, simply change the function below to your framework's
-    NDCore.Functions.AddMoney(amount, source, "bank")
+	NDCore.Functions.AddMoney(amount, source, "bank")
 end)
 
 -- version checker
