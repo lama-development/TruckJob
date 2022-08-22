@@ -1,26 +1,21 @@
 Config = {}
 
--- set whether you want to use ND_Framework and get paid
--- set this to false if you don't have ND_Framework
+-- leave this to true if you use ND_Framework (https://forum.cfx.re/t/updated-nd-framework-addons/4792200)
+-- set this to false if you want it to be standalone
 Config.UseND = true
--- set the minimum pay, the maximum pay and the penalty amount of money (when the player cancels the job)
--- only works if you set UseND to true, otherwise don't touch them
-Config.MinPayAmount = 750
-Config.MaxPayAmount = 1250
-Config.PenaltyAmount = 125
+-- set the amount of money the player will be paid for each job completed
+-- for example, if it is equal to 500, delivering 3 trailers will get you $1500
+-- only works if you set UseND to true, otherwise leave this as it is
+Config.PayPerJob = 750
 
 -- set the truck model name used for the job
 Config.TruckModel = 'phantom'
-
--- set the key to make the player cancel the job at any time
--- default is INPUT_FRONTEND_DELETE (DEL)
--- refer to this: https://docs.fivem.net/docs/game-references/controls/
-Config.CancelJobKey = 214
 
 -- set the location of the blip on the map where the player can start the job
 Config.BlipLocation = { x = 346.05, y = 3407.15,  z = 35.5 }
 
 -- set the location where you want the truck to spawn at the start of the mission
+-- I suggest having this near your BlipLocation
 -- h is the heading (what direction the truck will face when spawned)
 Config.DepotLocation = { x = 334.67, y = 3411.53,  z = 36.65,  h = 292.12 }
 
