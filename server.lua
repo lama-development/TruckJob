@@ -7,16 +7,10 @@ Do not edit below if you don't know what you are doing
 -- ND_Framework exports
 NDCore = exports["ND_Core"]:GetCoreObject()
 
--- If you are using another framework you can edit these 2 functions below with your framework's
 RegisterServerEvent("LamasJobs:GivePay")
 AddEventHandler("LamasJobs:GivePay", function(amount)
-	-- to do: validate amount from client to avoid exploit
+	-- if using another framework than ND, simply change the function below to your framework's
     NDCore.Functions.AddMoney(amount, source, "bank")
-end)
-
-RegisterServerEvent("LamasJobs:GivePenalty")
-AddEventHandler("LamasJobs:GivePenalty", function(amount)
-    NDCore.Functions.DeductMoney(amount, source, "bank")
 end)
 
 -- version checker
