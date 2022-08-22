@@ -4,7 +4,7 @@ For support - Lama#9612 on Discord
 Do not edit below if you don't know what you are doing
 ]] --
 
-amount = 0
+pay = 0
 
 -- draw blip on the map
 Citizen.CreateThread(function()
@@ -33,8 +33,6 @@ Citizen.CreateThread(function()
                 else
                     SpawnVehicle(Config.TruckModel, Config.DepotLocation)
                     SetPedIntoVehicle(player, vehicle, -1)
-                    -- tell server we are starting the job
-                    TriggerServerEvent("lama_jobs:started")
                     StartJob()
                 end
             end
@@ -96,7 +94,8 @@ function DeliverTrailer()
             -- and check if they don't have a trailer attached anymore
             if not IsVehicleAttachedToTrailer(vehicle) then
                 RemoveBlip(blip)
-                NewChoice(location)
+                pay = pay + Config.PayPerJob
+                NewChoice()
                 break
             end
         end
@@ -104,10 +103,7 @@ function DeliverTrailer()
 end
 
 -- choose to deliver another trailer or return do depot
-function NewChoice(location)
-    amount = amount + Config.PayPerDelivery
-    -- tell server we delivered something and where
-    TriggerServerEvent("lama_jobs:delivered", location)
+function NewChoice()
     DisplayNotification("Press ~b~E~w~ to accept another job.\nPress ~r~X~w~ to end your shift.")
     while true do
         Citizen.Wait(0)
@@ -149,9 +145,9 @@ function EndJob()
                 end
                 DeleteVehicle(trailer)
                 if Config.UseND then
-                    -- tell server ve've finished the job and need to pay us
-                    TriggerServerEvent("lama_jobs:finished")
-                    DisplayNotification("You've received ~g~$" .. amount .. " ~w~for completing the job.")
+                    -- todo: validate pay amount on server side for security purposes
+                    TriggerServerEvent("LamasJobs:GivePay", pay)
+                    DisplayNotification("You've received ~g~$" .. pay .. " ~w~for completing the job.")
                     break
                 else
                     DisplayNotification("~g~You've successfully completed the job.")

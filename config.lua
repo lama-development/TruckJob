@@ -1,28 +1,27 @@
 Config = {}
 
--- Leave this to true if you use ND_Framework (https://forum.cfx.re/t/updated-nd-framework-addons/4792200)
--- Set this to false if you want it to be standalone
+-- leave this to true if you use ND_Framework (https://forum.cfx.re/t/updated-nd-framework-addons/4792200)
+-- set this to false if you want it to be standalone
 Config.UseND = true
+-- set the amount of money the player will be paid for each job completed
+-- for example, if it is equal to 500, delivering 3 trailers will get you $1500
+-- only works if you set UseND to true, otherwise leave this as it is
+Config.PayPerJob = 750
 
--- Set the amount of money the player will be paid for each delivery completed
--- For example, if it is equal to 500, delivering 3 trailers will get you $1500
--- Only works if you set UseND to true, otherwise leave this as it is
-Config.PayPerDelivery = 750
-
--- Set the truck model name used for the job
+-- set the truck model name used for the job
 Config.TruckModel = 'phantom'
 
--- Set the location of the blip on the map where the player can start the job
+-- set the location of the blip on the map where the player can start the job
 Config.BlipLocation = { x = 346.05, y = 3407.15,  z = 35.5 }
 
--- Set the location where you want the truck to spawn at the start of the mission
+-- set the location where you want the truck to spawn at the start of the mission
 -- I suggest having this near your BlipLocation
 -- h is the heading (what direction the truck will face when spawned)
 Config.DepotLocation = { x = 334.67, y = 3411.53,  z = 36.65,  h = 292.12 }
 
--- Set the possible locations for the trailers to spawn
+-- set the possible locations for the trailers to spawn
 -- h is the heading (what direction the trailer will face when spawned)
--- Make sure they have a large place to spawn
+-- make sure they have a large place to spawn
 Config.TrailerLocations = {
     { x = 167.69,  y = 2756.53,  z = 43.39, h = 239.22 }, -- Small warehouse on Joshua Rd (4014)
     { x = 648.13, y = 2763.6, z = 41.97, h = 184.53 }, -- Harmony Suburban (4020)
@@ -34,10 +33,10 @@ Config.TrailerLocations = {
     { x = 1714.21, y = 4807.46, z = 41.8, h = 101.8 } -- Wonderama Arcade (2010)
 }
 
--- Set the possible destinations where you have to drive the trailer to
+-- set the possible destinations where you have to drive the trailer to
 Config.Destinations = {
     { x = -3169.63, y = 1102.37, z = 20.74 }, -- Chumash Plaza (5033)
-    { x = 31.54, y = 6287.21, z = 31.24 }, -- Cluckin Bell Factory (1021)
+    { x = 31.54, y = 6287.21, z = 31.24, }, -- Cluckin Bell Factory (1021)
     { x = -360.2, y = 6073.27, z = 31.5 }, -- Paleto Bay Market (1036)
     { x = 3640.62, y = 3766.41, z = 28.52 }, -- Humane Labs (2060)  
     { x = 2525.09, y = 2625.93, z = 37.94 }, -- Rex's Diner (3056)
@@ -52,7 +51,7 @@ Config.Destinations = {
     { x = -802.16, y = 5409.08, z = 33.86 } -- GOH Paleto Forest (1083)
 }
 
--- Set the possible trailer model names that will be used
+-- set the possible trailer model names that will be used
 Config.TrailerModels = {
     'docktrailer',
     'tr4',
