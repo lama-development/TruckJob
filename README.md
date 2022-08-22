@@ -40,7 +40,7 @@ Check the config.lua for more information.
 ## :white_check_mark: **Changelog**
 > **v1.2**
 > - Added validations for server events to avoid exploits
-> - Players now get paid based on how many tralers they deliver
+> - Players now get paid based on how many trailers they deliver
 
 > **v1.1**
 > - Revamped and optimized code
