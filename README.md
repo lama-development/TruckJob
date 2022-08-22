@@ -11,7 +11,7 @@ This job consists of 3 parts:
 2. Pick up the trailer and drive to the destination.
 3. Detach the trailer and choose to get another job or return to the depot.  
 
-The player can decide to cancel the job at any moment. If that happens, they will have to bring back the truck to the depot where they will pay a penalty.
+The player will be paid based on how many trailers have been delivered.
 
 ## :bulb: **Features** 
 - Customise the amount of money you get when completing a task (if using ND)
