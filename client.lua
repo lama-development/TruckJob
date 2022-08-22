@@ -2,31 +2,9 @@
 TruckJob - Created by Lama	
 For support - Lama#9612 on Discord	
 Do not edit below if you don't know what you are doing
-]]--
+]] --
 
--- global variables, do not touch
-isOnJob = false
-hasCanceledJob = false
-
--- starting the job
-Citizen.CreateThread(function()
-    AddTextEntry("press_start_job", "Press ~INPUT_CONTEXT~ to start your shift")
-    while true do
-        Citizen.Wait(0)
-        local player = PlayerPedId()    
-        -- get distance between blip and player and check if player is near it
-        if #(GetEntityCoords(player) - vector3(Config.BlipLocation.x, Config.BlipLocation.y, Config.BlipLocation.z)) <= 5 then
-            DisplayHelpTextThisFrame("press_start_job")
-            if IsControlPressed(1, 38) then
-                if IsPedSittingInAnyVehicle(player) then
-                    DisplayNotification("~r~You can't start the job while you're in a vehicle.")
-                else
-                    StartJob()
-                end
-            end
-        end
-    end
-end)
+pay = 0
 
 -- draw blip on the map
 Citizen.CreateThread(function()
@@ -40,28 +18,30 @@ Citizen.CreateThread(function()
     EndTextCommandSetBlipName(blip)
 end)
 
-function StartJob()
-    local player = PlayerPedId()
-    -- set model of the vehicle used for the job
-    local vehicleName = Config.TruckModel
-    RequestModel(vehicleName)
-    while not HasModelLoaded(vehicleName) do
-        Wait(500)
+-- starting the job
+Citizen.CreateThread(function()
+    AddTextEntry("press_start_job", "Press ~INPUT_CONTEXT~ to start your shift")
+    while true do
+        Citizen.Wait(0)
+        local player = PlayerPedId()
+        -- get distance between blip and player and check if player is near it
+        if #(GetEntityCoords(player) - vector3(Config.BlipLocation.x, Config.BlipLocation.y, Config.BlipLocation.z)) <= 5 then
+            DisplayHelpTextThisFrame("press_start_job")
+            if IsControlPressed(1, 38) then
+                if IsPedSittingInAnyVehicle(player) then
+                    DisplayNotification("~r~You can't start the job while you're in a vehicle.")
+                else
+                    SpawnVehicle(Config.TruckModel, Config.DepotLocation)
+                    SetPedIntoVehicle(player, vehicle, -1)
+                    StartJob()
+                end
+            end
+        end
     end
-    -- spawn truck at the depot
-    vehicle = CreateVehicle(vehicleName, Config.DepotLocation.x, Config.DepotLocation.y, Config.DepotLocation.z, Config.DepotLocation.h, true, false)
-    SetVehicleOnGroundProperly(vehicle)
-    SetPedIntoVehicle(player, vehicle, -1)
-    SetEntityAsMissionEntity(vehicle, true, true)
-    SetModelAsNoLongerNeeded(vehicleName)
-    -- give player first task
-    isOnJob = true
-    FirstTask()
-end
+end)
 
--- the first task consists of driving to the trailer and picking it up
-function FirstTask()
-    hasCanceledJob = false
+-- drive to the trailer and pick it up
+function StartJob()
     -- choose random location where the trailer is going to spawn
     local location = math.randomchoice(Config.TrailerLocations)
     -- choose random trailer model
@@ -74,35 +54,29 @@ function FirstTask()
     SetBlipRouteColour(blip, 26)
     -- clear area first
     ClearArea(location.x, location.y, location.z, 50, false, false, false, false, false);
-    -- spawn the chosen trailer at the chosen location
-    SpawnTrailer(model, location)
-    DisplayNotification("~b~Pick up the trailer~w~. Press ~r~DEL~w~ to cancel the job and pay a penalty.")
+    -- delete previous trailer before spawning a new one
+    if trailer ~= nil then 
+        DeleteVehicle(trailer)
+    end
+    trailer = SpawnTrailer(model, location)
+    DisplayNotification("~b~New task: ~w~pick up the trailer at the marked location.")
     while true do
         Citizen.Wait(0)
         local player = PlayerPedId()
-        -- if player cancels the task
-        if IsControlPressed(1, Config.CancelJobKey) then
-            DeleteVehicle(trailer)
-            RemoveBlip(blip)
-            hasCanceledJob = true
-            ThirdTask()
-            break
-        end
         -- gets distance between player and trailer location and check if player is in the vicinity of it
         if #(GetEntityCoords(player) - vector3(location.x, location.y, location.z)) <= 20 then
             -- and check if they have picked up the trailer 
             if IsVehicleAttachedToTrailer(vehicle) then
                 RemoveBlip(blip)
-                SecondTask()
+                DeliverTrailer()
                 break
             end
         end
     end
 end
 
--- the second task consists of driving to the location and deliver the trailer
-function SecondTask()
-    hasCanceledJob = false
+-- drive to the location and deliver the trailer
+function DeliverTrailer()
     AddTextEntry("press_detach_trailer", "Long press ~INPUT_VEH_HEADLIGHT~ to detach the trailer")
     local location = math.randomchoice(Config.Destinations)
     local blip = AddBlipForCoord(location.x, location.y, location.z)
@@ -110,43 +84,51 @@ function SecondTask()
     SetBlipColour(blip, 26)
     SetBlipRoute(blip, true)
     SetBlipRouteColour(blip, 26)
-    DisplayNotification( "~b~Detach the trailer at the location.~w~ Press ~r~DEL~w~ to cancel the job and pay a penalty.")
+    DisplayNotification("~b~New task: ~w~deliver the trailer at the marked location.")
     while true do
         Citizen.Wait(0)
         local player = PlayerPedId()
-        -- if player cancels the task
-        if IsControlPressed(1, Config.CancelJobKey) then
-            DeleteVehicle(trailer)
-            RemoveBlip(blip)
-            hasCanceledJob = true
-            ThirdTask()
-            break
-        end        
         -- gets distance between player and task location and check f player is in the vicinity of it
         if #(GetEntityCoords(player) - vector3(location.x, location.y, location.z)) <= 20 then
             DisplayHelpTextThisFrame("press_detach_trailer")
             -- and check if they don't have a trailer attached anymore
-            if IsVehicleAttachedToTrailer(vehicle) == false then
+            if not IsVehicleAttachedToTrailer(vehicle) then
                 RemoveBlip(blip)
-                ThirdTask()
+                pay = pay + Config.PayPerJob
+                NewChoice()
                 break
             end
         end
     end
 end
 
--- the third task consists of driving back to the truck depot and get paid
-function ThirdTask()
+-- choose to deliver another trailer or return do depot
+function NewChoice()
+    DisplayNotification("Press ~b~E~w~ to accept another job.\nPress ~r~X~w~ to end your shift.")
+    while true do
+        Citizen.Wait(0)
+        if IsControlPressed(1, 38) then
+            StartJob()
+            break         
+        elseif IsControlPressed(1, 73) then
+            EndJob()
+            break
+        end
+    end
+end
+
+-- drive back to the truck depot and get paid
+function EndJob()
     local blip = AddBlipForCoord(Config.DepotLocation.x, Config.DepotLocation.y, Config.DepotLocation.z)
     AddTextEntry("press_end_job", "Press ~INPUT_CONTEXT~ to end your shift")
     SetBlipSprite(blip, 477)
     SetBlipColour(blip, 26)
     SetBlipRoute(blip, true)
     SetBlipRouteColour(blip, 26)
-    if hasCanceledJob then
-        DisplayNotification("~r~Job cancelled. ~w~Return the truck to the depot.")
-    else
-        DisplayNotification("~b~Return the truck to the depot to get paid.")
+    if Config.UseND then 
+        DisplayNotification("~b~New task: ~w~return the truck to the depot to get paid.")
+    else 
+        DisplayNotification("~b~New task: ~w~return the truck to the depot.")
     end
     while true do
         Citizen.Wait(0)
@@ -157,48 +139,47 @@ function ThirdTask()
             if IsControlPressed(1, 38) then
                 RemoveBlip(blip)
                 -- deletes truck and trailer
-                DeleteVehicle(GetVehiclePedIsIn(player, false))
+                local truck = GetVehiclePedIsIn(player, false)
+                if GetEntityModel(truck) == GetHashKey(Config.TruckModel) then
+                    DeleteVehicle(GetVehiclePedIsIn(player, false))
+                end
                 DeleteVehicle(trailer)
-                isOnJob = false
                 if Config.UseND then
-                    if hasCanceledJob then
-                        TriggerServerEvent("LamasJobs:GivePenalty", Config.PenaltyAmount)
-                        DisplayNotification("You've been fined ~r~$" .. Config.PenaltyAmount .. " ~w~for cancelling the job.")
-                        break
-                    else 
-                        local amount = math.random(Config.MinPayAmount, Config.MaxPayAmount)
-                        TriggerServerEvent("LamasJobs:GivePay", amount)
-                        DisplayNotification("You've received ~g~$" .. amount .. " ~w~for completing the job.")
-                        break
-                    end
+                    -- todo: validate pay amount on server side for security purposes
+                    TriggerServerEvent("LamasJobs:GivePay", pay)
+                    DisplayNotification("You've received ~g~$" .. pay .. " ~w~for completing the job.")
+                    break
                 else
-                    if hasCanceledJob then
-                        DisplayNotification("~b~You've cancelled the job.")
-                        break
-                    else
-                        DisplayNotification("~g~You've successfully completed the job.")
-                        break
-                    end
+                    DisplayNotification("~g~You've successfully completed the job.")
+                    break
                 end
             end
         end
     end
 end
 
--- spawn random generated trailer at random generated location
-function SpawnTrailer(model, location)
-    local trailerName = model
-    -- load model
-    RequestModel(trailerName)
-    while not HasModelLoaded(trailerName) do
+-- function to spawn vehicle at desired location
+function SpawnVehicle(model, location)
+    RequestModel(model)
+    while not HasModelLoaded(model) do
         Wait(500)
     end
-    -- spawn trailer
-    trailer = CreateVehicle(trailerName, location.x, location.y, location.z, location.h, true, false)
+    vehicle = CreateVehicle(model, location.x, location.y, location.z, location.h, true, false)
+    SetVehicleOnGroundProperly(vehicle)
+    SetEntityAsMissionEntity(vehicle, true, true)
+    SetModelAsNoLongerNeeded(model)
+end
+
+-- function to trailer vehicle at desired location
+function SpawnTrailer(model, location)
+    RequestModel(model)
+    while not HasModelLoaded(model) do
+        Wait(500)
+    end
+    trailer = CreateVehicle(model, location.x, location.y, location.z, location.h, true, false)
     SetVehicleOnGroundProperly(trailer)
-    SetPedIntoVehicle(player, trailer, -1)
     SetEntityAsMissionEntity(trailer, true, true)
-    SetModelAsNoLongerNeeded(trailerName)
+    SetModelAsNoLongerNeeded(model)
 end
 
 -- function to get random items from a table
