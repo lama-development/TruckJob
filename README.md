@@ -29,7 +29,7 @@ Check the config.lua for more information.
 ## :bar_chart: Resmon
 | Context | CPU |
 | ------------- | ------------- |
-| Idle  | 0.01 ms  |
+| Idle  | 0.00 ms  |
 | Peak  | 0.02 ms  |
 
 ## :inbox_tray: Installation
@@ -38,6 +38,10 @@ Check the config.lua for more information.
 - Add `start TruckJob` or `ensure TruckJob` to your server.cfg 
 
 ## :white_check_mark: **Changelog**
+> **v1.2**
+> - Added server-side validations
+> - Resmon on idle is now 0.00 ms
+
 > **v1.1**
 > - Revamped and optimized code
 > - Added possibility to accept a new job when a delivery has been made
