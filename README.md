@@ -29,7 +29,7 @@ Check the config.lua for more information.
 ## :bar_chart: Resmon
 | Context | CPU |
 | ------------- | ------------- |
-| Idle  | 0.01 ms  |
+| Idle  | 0.00 ms  |
 | Peak  | 0.02 ms  |
 
 ## :inbox_tray: Installation
@@ -39,8 +39,8 @@ Check the config.lua for more information.
 
 ## :white_check_mark: **Changelog**
 > **v1.2**
-> - Added validations for server events to avoid exploits
-> - Players now get paid based on how many trailers they deliver
+> - Added server-side validations
+> - Resmon on idle is now 0.00 ms
 
 > **v1.1**
 > - Revamped and optimized code
