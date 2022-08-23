@@ -4,10 +4,14 @@ For support - Lama#9612 on Discord
 Do not edit below if you don't know what you are doing
 ]] --
 
-amount = 0
+local amount = 0
+local playerCoords = nil
+local jobStarted = false
+local truck, trailer = nil, nil
+local opti
 
 -- draw blip on the map
-Citizen.CreateThread(function()
+CreateThread(function()
     local blip = AddBlipForCoord(Config.BlipLocation.x, Config.BlipLocation.y, Config.BlipLocation.z)
     SetBlipSprite(blip, 457)
     SetBlipDisplay(blip, 4)
@@ -18,27 +22,38 @@ Citizen.CreateThread(function()
     EndTextCommandSetBlipName(blip)
 end)
 
+CreateThread(function()
+    while true do
+        playerCoords = GetEntityCoords(PlayerPedId())
+        Wait(500)
+    end
+end)
+
 -- starting the job
-Citizen.CreateThread(function()
+CreateThread(function()
     AddTextEntry("press_start_job", "Press ~INPUT_CONTEXT~ to start your shift")
     while true do
-        Citizen.Wait(0)
-        local player = PlayerPedId()
+        opti = 2
         -- get distance between blip and player and check if player is near it
-        if #(GetEntityCoords(player) - vector3(Config.BlipLocation.x, Config.BlipLocation.y, Config.BlipLocation.z)) <= 5 then
-            DisplayHelpTextThisFrame("press_start_job")
-            if IsControlPressed(1, 38) then
-                if IsPedSittingInAnyVehicle(player) then
-                    DisplayNotification("~r~You can't start the job while you're in a vehicle.")
-                else
-                    SpawnVehicle(Config.TruckModel, Config.DepotLocation)
-                    SetPedIntoVehicle(player, vehicle, -1)
-                    -- tell server we are starting the job
-                    TriggerServerEvent("lama_jobs:started")
-                    StartJob()
+        if not jobStarted then
+            if #(playerCoords - vector3(Config.BlipLocation.x, Config.BlipLocation.y, Config.BlipLocation.z)) <= 5 then
+                DisplayHelpTextThisFrame("press_start_job")
+                if IsControlPressed(1, 38) then
+                    if IsPedSittingInAnyVehicle(player) then
+                        DisplayNotification("~r~You can't start the job while you're in a vehicle.")
+                    else
+                        SpawnVehicle(Config.TruckModel, Config.DepotLocation)
+                        SetPedIntoVehicle(player, vehicle, -1)
+                        -- tell server we are starting the job
+                        TriggerServerEvent("lama_jobs:started")
+                        StartJob()
+                    end
                 end
+            else
+                opti = 2000
             end
         end
+        Wait(opti)
     end
 end)
 
@@ -57,23 +72,26 @@ function StartJob()
     -- clear area first
     ClearArea(location.x, location.y, location.z, 50, false, false, false, false, false);
     -- delete previous trailer before spawning a new one
-    if trailer ~= nil then 
+    if trailer then 
         DeleteVehicle(trailer)
     end
     trailer = SpawnTrailer(model, location)
     DisplayNotification("~b~New task: ~w~pick up the trailer at the marked location.")
+    jobStarted = true
     while true do
-        Citizen.Wait(0)
-        local player = PlayerPedId()
+        opti = 2
         -- gets distance between player and trailer location and check if player is in the vicinity of it
-        if #(GetEntityCoords(player) - vector3(location.x, location.y, location.z)) <= 20 then
+        if #(playerCoords - vector3(location.x, location.y, location.z)) <= 20 then
             -- and check if they have picked up the trailer 
             if IsVehicleAttachedToTrailer(vehicle) then
                 RemoveBlip(blip)
                 DeliverTrailer()
                 break
             end
+        else
+            opti = 2000
         end
+        Wait(opti)
     end
 end
 
@@ -88,10 +106,9 @@ function DeliverTrailer()
     SetBlipRouteColour(blip, 26)
     DisplayNotification("~b~New task: ~w~deliver the trailer at the marked location.")
     while true do
-        Citizen.Wait(0)
-        local player = PlayerPedId()
+        opti = 2
         -- gets distance between player and task location and check f player is in the vicinity of it
-        if #(GetEntityCoords(player) - vector3(location.x, location.y, location.z)) <= 20 then
+        if #(playerCoords - vector3(location.x, location.y, location.z)) <= 20 then
             DisplayHelpTextThisFrame("press_detach_trailer")
             -- and check if they don't have a trailer attached anymore
             if not IsVehicleAttachedToTrailer(vehicle) then
@@ -99,7 +116,10 @@ function DeliverTrailer()
                 NewChoice(location)
                 break
             end
+        else
+            opti = 2000
         end
+        Wait(opti)
     end
 end
 
@@ -110,7 +130,7 @@ function NewChoice(location)
     TriggerServerEvent("lama_jobs:delivered", location)
     DisplayNotification("Press ~b~E~w~ to accept another job.\nPress ~r~X~w~ to end your shift.")
     while true do
-        Citizen.Wait(0)
+        Wait(0)
         if IsControlPressed(1, 38) then
             StartJob()
             break         
@@ -134,31 +154,35 @@ function EndJob()
     else 
         DisplayNotification("~b~New task: ~w~return the truck to the depot.")
     end
+    jobStarted = false
     while true do
-        Citizen.Wait(0)
-        local player = PlayerPedId()
+        opti = 2
         -- gets distance between player and depot location and check if player is in the vicinity of it
-        if #(GetEntityCoords(player) - vector3(Config.DepotLocation.x, Config.DepotLocation.y, Config.DepotLocation.z)) <= 10 then
+        if #(playerCoords - vector3(Config.DepotLocation.x, Config.DepotLocation.y, Config.DepotLocation.z)) <= 10 then
             DisplayHelpTextThisFrame("press_end_job")
             if IsControlPressed(1, 38) then
                 RemoveBlip(blip)
                 -- deletes truck and trailer
-                local truck = GetVehiclePedIsIn(player, false)
+                local truck = GetVehiclePedIsIn(PlayerPedId(), false)
                 if GetEntityModel(truck) == GetHashKey(Config.TruckModel) then
-                    DeleteVehicle(GetVehiclePedIsIn(player, false))
+                    DeleteVehicle(GetVehiclePedIsIn(PlayerPedId(), false))
                 end
                 DeleteVehicle(trailer)
                 if Config.UseND then
                     -- tell server ve've finished the job and need to pay us
                     TriggerServerEvent("lama_jobs:finished")
                     DisplayNotification("You've received ~g~$" .. amount .. " ~w~for completing the job.")
+                    amount = 0
                     break
                 else
                     DisplayNotification("~g~You've successfully completed the job.")
                     break
                 end
             end
+        else
+            opti = 1000
         end
+        Wait(opti)
     end
 end
 
