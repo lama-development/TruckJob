@@ -14,7 +14,7 @@ local playersOnJob = {}
 function isClientTooFar(location)
 	local distance = #(GetEntityCoords(GetPlayerPed(source)) - vector3(location.x, location.y, location.z))
 	-- checking from a distance of 15 because it might not be 100% correct
-	if distance > 15 then return true
+	if distance > 25 then return true
 	else return false
 	end
 end
