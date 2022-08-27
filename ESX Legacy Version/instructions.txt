@@ -1,4 +1,5 @@
 If you are using ESX Legacy, replace the original files with the two files provided.
+If not, you can delete the 'ESX Legacy Version' folder if you want.
 
 Credits:
 NaviMax30 (https://forum.cfx.re/u/navimax30)
