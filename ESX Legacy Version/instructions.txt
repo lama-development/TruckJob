@@ -1,0 +1,5 @@
+If you are using ESX Legacy, replace the original files with the two files provided.
+
+Credits:
+NaviMax30 (https://forum.cfx.re/u/navimax30)
+auramap (https://forum.cfx.re/u/auramap)
