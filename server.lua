@@ -11,6 +11,7 @@ NDCore = exports["ND_Core"]:GetCoreObject()
 local deliveries = {}
 local playersOnJob = {}
 
+-- function to check if the client is actually at the job ending location before giving them the money
 function isClientTooFar(location)
 	local distance = #(GetEntityCoords(GetPlayerPed(source)) - vector3(location.x, location.y, location.z))
 	-- checking from a distance of 15 because it might not be 100% correct
@@ -44,6 +45,7 @@ RegisterNetEvent("lama_jobs:finished", function()
 	else
 		-- calculate amount of money to give to the player
 		local amount = Config.PayPerDelivery * deliveries[src]
+			-- only give the money to the client if it is on the job and near the ending location
 		if playersOnJob[src] and not isClientTooFar(Config.DepotLocation) then
 			-- give the money to player
 			-- if using another framework than ND, simply change the function below to your framework's
