@@ -48,11 +48,3 @@ Check the config.lua for more information.
 
 > **v1.0**
 > - Initial Release 
-
-## :heart: **Support me**
-Please consider leaving a like or a simple comment if you enjoyed this release, to show support and allowing me to keep making free high-quality resources.  
-
-You can also check out my other releases:
-- [HealingPads](https://forum.cfx.re/t/free-healingpads-heal-at-hospitals/4888341)
-- [ShotSpotter](https://forum.cfx.re/t/free-shotspotter-gunshot-detection-system/3599253/1)
-- [CarLock](https://forum.cfx.re/t/free-carlock-animation-sound/3768972/1)
