@@ -1,5 +1,5 @@
 # **TruckJob - Work as a truck driver**
-![truckjob](https://user-images.githubusercontent.com/79053058/185757903-e0aabb8e-a8e7-4be8-93d6-5f2d6ae5d3fb.png)
+![TruckJob](https://user-images.githubusercontent.com/79053058/194764819-2393db2b-8d30-4219-8195-b50c6236c10f.png)
 
 ## :bookmark_tabs: **Description** 
 This FiveM resource enables the player to work as a truck driver and deliver cargo to locations around the map.
