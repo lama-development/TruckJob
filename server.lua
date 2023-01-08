@@ -60,7 +60,7 @@ end)
 
 -- version checker
 Citizen.CreateThread(function()
-    updatePath = "/ItzEndah/TruckJob"
+    updatePath = "/lama-development/TruckJob"
     resourceName = "TruckJob by Lama"
 
     function checkVersion(err, responseText, headers)
