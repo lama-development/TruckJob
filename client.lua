@@ -1,5 +1,5 @@
 --[[
-TruckJob - Created by Lama	
+TruckJob - Created by Lama
 For support - https://discord.gg/etkAKTw3M7
 Do not edit below if you don't know what you are doing
 ]] --
@@ -151,7 +151,9 @@ function EndJob()
     SetBlipRouteColour(blip, 26)
     if Config.UseND then 
         DisplayNotification("~b~New task: ~w~return the truck to the depot to get paid.")
-    else 
+    elseif Config.UseNAT then
+        DisplayNotification("~b~New task: ~w~return the truck to the depot to get paid.")
+    else
         DisplayNotification("~b~New task: ~w~return the truck to the depot.")
     end
     jobStarted = false
@@ -171,6 +173,11 @@ function EndJob()
                 if Config.UseND then
                     -- tell server ve've finished the job and need to pay us
                     TriggerServerEvent("lama_jobs:finished")
+                    DisplayNotification("You've received ~g~$" .. amount .. " ~w~for completing the job.")
+                    amount = 0
+                    break
+                elseif Config.UseNAT then
+                    TriggerServerEvent("lama_jobs:finishednat")
                     DisplayNotification("You've received ~g~$" .. amount .. " ~w~for completing the job.")
                     amount = 0
                     break
