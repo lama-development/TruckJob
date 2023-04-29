@@ -5,7 +5,9 @@ Do not edit below if you don't know what you are doing
 ]] --
 
 -- ND_Framework exports (edit with your framework's)
-NDCore = exports["ND_Core"]:GetCoreObject()
+-- Uncomment the next line to use NDFramework
+
+-- NDCore = exports["ND_Core"]:GetCoreObject()
 
 -- variables, do not touch
 local deliveries = {}
@@ -52,6 +54,27 @@ RegisterNetEvent("lama_jobs:finished", function()
             deliveries[src] = 0
             playersOnJob[src] = false
 			NDCore.Functions.AddMoney(amount, src, "bank")
+		else
+			print(string.format("^1Possible exploiter detected\nName: ^0%s\n^1Identifier: ^0%s\n^1Reason: ^0has somehow requested to be paid without being near the job ending location", GetPlayerName(source), GetPlayerIdentifier(source, 0)))
+		end	
+	end
+end)
+
+RegisterNetEvent("lama_jobs:finishednat", function()
+    local src = source
+	if not deliveries[src] or deliveries[src] == 0 then
+		print(string.format("^1Possible exploiter detected\nName: ^0%s\n^1Identifier: ^0%s\n^1Reason: ^0has somehow requested to be paid without delivering anything", GetPlayerName(source), GetPlayerIdentifier(source, 0)))
+	else
+		-- calculate amount of money to give to the player
+		local amount = Config.PayPerDelivery * deliveries[src]
+			-- only give the money to the client if it is on the job and near the ending location
+		if playersOnJob[src] and not isClientTooFar(Config.DepotLocation) then
+			-- give the money to player
+            deliveries[src] = 0
+            playersOnJob[src] = false
+            local xPlayer = exports.money:getaccount(source)
+
+            exports.money:updateaccount(source, {cash = xPlayer.amount + amount, bank = xPlayer.bank})
 		else
 			print(string.format("^1Possible exploiter detected\nName: ^0%s\n^1Identifier: ^0%s\n^1Reason: ^0has somehow requested to be paid without being near the job ending location", GetPlayerName(source), GetPlayerIdentifier(source, 0)))
 		end	
