@@ -1,8 +1,11 @@
 Config = {}
 
 -- Leave this to true if you use ND_Framework (https://forum.cfx.re/t/updated-nd-framework-addons/4792200)
--- Set this to false if you want it to be standalone
-Config.UseND = true
+Config.UseND = false
+
+-- Set this to true to use NAT2k15's Standalone Money (https://github.com/NAT2K15/fivem-money-system)
+-- Set BOTH UseND and UseNAT to false if you want to use as standalone.
+Config.UseNAT = true
 
 -- Set the amount of money the player will be paid for each delivery completed
 -- For example, if it is equal to 500, delivering 3 trailers will get you $1500
