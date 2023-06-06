@@ -38,6 +38,9 @@ Check the config.lua for more information.
 - Add `start TruckJob` or `ensure TruckJob` to your server.cfg 
 
 ## :white_check_mark: **Changelog**
+> **v1.3**
+> - Added the possibility to force quit the job with a penalty.
+
 > **v1.2**
 > - Added server-side validations
 > - Resmon on idle is now 0.00 ms
