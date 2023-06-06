@@ -9,6 +9,10 @@ Config.UseND = true
 -- Only works if you set UseND to true, otherwise leave this as it is
 Config.PayPerDelivery = 750
 
+-- Set the amount of money the player will be fined for cancelling the job
+-- Only works if you set UseND to true, otherwise leave this as it is
+Config.Penalty = 250
+
 -- Set the truck model name used for the job
 Config.TruckModel = 'phantom'
 

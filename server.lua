@@ -58,6 +58,12 @@ RegisterNetEvent("lama_jobs:finished", function()
 	end
 end)
 
+RegisterNetEvent("lama_jobs:forcequit", function()
+    local src = source
+    local penalty = Config.Penalty
+    NDCore.Functions.DeductMoney(penalty, src, "bank")
+end)
+
 -- version checker
 Citizen.CreateThread(function()
     updatePath = "/lama-development/TruckJob"

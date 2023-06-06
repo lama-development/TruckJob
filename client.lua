@@ -64,7 +64,7 @@ function StartJob()
     -- choose random trailer model
     local model = math.randomchoice(Config.TrailerModels)
     -- add trailer blip to map
-    local blip = AddBlipForCoord(location.x, location.y, location.z)
+    blip = AddBlipForCoord(location.x, location.y, location.z)
     SetBlipSprite(blip, 479)
     SetBlipColour(blip, 26)
     SetBlipRoute(blip, true)
@@ -77,9 +77,18 @@ function StartJob()
     end
     trailer = SpawnTrailer(model, location)
     DisplayNotification("~b~New task: ~w~pick up the trailer at the marked location.")
-    jobStarted = true
+    if Config.UseND then 
+        DisplayNotification("Long press ~r~SHIFT~w~ + ~r~X~w~ at any time to force-cancel the job and pay a penalty.")
+    else
+        DisplayNotification("Long Press ~r~SHIFT~w~ + ~r~X~w~ at any time to force-cancel the job.")
+    end
     while true do
         opti = 2
+        -- check if forcequit 
+        if IsControlPressed(1, 73) then
+            ForceQuit()
+            break
+        end
         -- gets distance between player and trailer location and check if player is in the vicinity of it
         if #(playerCoords - vector3(location.x, location.y, location.z)) <= 20 then
             -- and check if they have picked up the trailer 
@@ -107,6 +116,11 @@ function DeliverTrailer()
     DisplayNotification("~b~New task: ~w~deliver the trailer at the marked location.")
     while true do
         opti = 2
+        -- check if forcequit 
+        if IsControlPressed(1, 73) then
+            ForceQuit()
+            break
+        end
         -- gets distance between player and task location and check f player is in the vicinity of it
         if #(playerCoords - vector3(location.x, location.y, location.z)) <= 20 then
             DisplayHelpTextThisFrame("press_detach_trailer")
@@ -184,6 +198,19 @@ function EndJob()
         end
         Wait(opti)
     end
+end
+
+function ForceQuit()
+    DeleteVehicle(GetVehiclePedIsIn(PlayerPedId(), false))
+    DeleteVehicle(trailer)
+    RemoveBlip(blip)
+    if Config.UseND then
+        TriggerServerEvent("lama_jobs:forcequit")
+        DisplayNotification("You've been fined ~r~$" .. Config.Penalty .. " ~w~for cancelling the job.")
+    else
+        DisplayNotification("~r~You've cancelled the job.")
+    end
+    amount = 0
 end
 
 -- function to spawn vehicle at desired location
