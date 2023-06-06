@@ -39,7 +39,7 @@ Check the config.lua for more information.
 
 ## :white_check_mark: **Changelog**
 > **v1.3**
-> - Added the possibility to force quit the job with a penalty.
+> - Added the possibility to force quit the job with a penalty
 
 > **v1.2**
 > - Added server-side validations
